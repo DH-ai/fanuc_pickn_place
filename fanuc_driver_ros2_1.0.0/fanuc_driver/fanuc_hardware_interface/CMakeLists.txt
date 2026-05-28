@@ -27,14 +27,21 @@ target_link_libraries(fanuc_robot_driver PUBLIC
   fanuc_libs::fanuc_client
   fanuc_libs::gpio_config
 )
+
+if(${hardware_interface_VERSION} VERSION_LESS 2.52.0)
+  target_link_libraries(fanuc_robot_driver PUBLIC ${hardware_interface_LIBRARIES})
+  target_include_directories(fanuc_robot_driver PRIVATE ${hardware_interface_INCLUDE_DIRS})
+else()
+  target_link_libraries(fanuc_robot_driver PUBLIC hardware_interface::hardware_interface)
+endif()
+
+pluginlib_export_plugin_description_file(hardware_interface hardware_interface_plugin.xml)
+
 target_include_directories(fanuc_robot_driver PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
-target_include_directories(fanuc_robot_driver PRIVATE ${hardware_interface_INCLUDE_DIRS})
-target_include_directories(fanuc_robot_driver PUBLIC include)
 
-pluginlib_export_plugin_description_file(hardware_interface hardware_interface_plugin.xml)
 
 add_library(fanuc_hardware_interface_constants INTERFACE)
 target_include_directories(fanuc_hardware_interface_constants INTERFACE

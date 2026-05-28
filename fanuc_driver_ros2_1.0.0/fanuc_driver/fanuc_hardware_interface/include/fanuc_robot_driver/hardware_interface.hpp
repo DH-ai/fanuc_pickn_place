@@ -72,6 +72,19 @@ private:
     double is_connected{};
   };
 
+  struct ForceSensorValues
+  {
+    // float
+    double force_x{};
+    double force_y{};
+    double force_z{};
+    double moment_x{};
+    double moment_y{};
+    double moment_z{};
+    // uint32_t
+    double fs_type{};
+  }; 
+
   std::unique_ptr<fanuc_client::FanucClient> fanuc_client_;
   Eigen::VectorXd fr_joint_pos_;
   Eigen::VectorXd fr_prev_joint_pos_;
