@@ -209,26 +209,8 @@ Remove the redundant manual `world` link definition in the top-level file. Rely 
 When `use_mock:=false` is set, the `fanuc_hardware_interface` attempts a real UDP/TCP connection to the Fanuc controller. If it times out, one of three things is happening:
 
 1. Network unreachability (IP mismatch).
-2. The Fanuc Teach Pendant (TP) is not running the ROS KAREL server programs.
+2. The Fanuc Teach Pendant (TP) is not running the ROS KAREL server programs or not in AUTO mode.
 3. The port requested by ROS 2 (`rmi_port:=16001`) does not match the port configured on the Fanuc controller.
 
-**The Fix & Physical Verification Steps:**
-
-1. **Verify the PC IP:** Ensure the Ubuntu PC is physically on the same subnet (e.g., `192.168.0.100`) and can `ping 192.168.0.20`.
-2. **Install KAREL Programs:** * Transfer the Fanuc ROS driver `.pc` files from your PC to a USB.
-* On the TP, navigate to `[MENU] -> [7] FILE` and `[F3] LOAD` the `.pc` files onto the controller.
-
-
-3. **Configure the TP Port:**
-* Do not look at the physical ports (e.g., "JD17", "Port 2"). You need the Software Socket Port.
-* Go to `[MENU] -> [0] NEXT -> [6] SYSTEM -> [F1] TYPE -> Variables`.
-* Open `$HOSTCFG`. Find the index assigned to your ROS connection tag.
-* Locate the `$SERVER_PORT` variable. Ensure this number (e.g., `11000` or `16001`) exactly matches the `rmi_port` passed in your URDF.
-
-
-4. **Run the Server:** Ensure the `ROS_STATE` or `ROS_RELAY` program is actively `RUNNING` in the `STATUS -> KAREL` menu.
-5. **Fix Circular Arguments:** Ensure your top-level URDF actually passes the IP rather than creating a circular reference.
-```xml
-<xacro:arg name="robot_ip" default="192.168.0.20"/>
 
 ```
