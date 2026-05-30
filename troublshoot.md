@@ -67,6 +67,7 @@ robot_description = Command([
         FindPackageShare("fanuc_hardware_interface"), 
         "robot", 
         PythonExpression(["'", robot_model, ".urdf.xacro'"]) # Evaluates to 'm20_35-18d.urdf.xacro'
+        # or f"{robot_model}.urdf.xacro"
     ]),
     " robot_ip:=1.1.1.1 use_mock:=true "
 ])
