@@ -1,1 +1,1 @@
-# Fanuc Pick n Place
+# Fanuc Pick & Place
