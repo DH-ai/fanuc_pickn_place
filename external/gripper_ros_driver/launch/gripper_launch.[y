@@ -18,7 +18,7 @@ def generate_launch_description():
 
 Topics exposed
 Topic	Type
-/joint_states	JointStatecd 
+/joint_states	JointState
 /gripper_target	Float64MultiArray
 /gripper_command	Action
 /hold	Service
