@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!--
+  Fanuc M-20iD/35 + Tesollo DG-3FB combined cell URDF.
+
+  Dependencies (clone into ROS workspace src/):
+    - fanuc_description  (FANUC-CORPORATION/fanuc_description)
+    - delto_b_ros2       (tesollodelto/delto_b_ros2) -> delto_description package
+
+  Launch args:
+    robot_model   : m20_35_18d (default) | m20_25_18d
+    use_mock      : true for MoveIt demo without real hardware
+-->
+<robot name="fanuc_m20_tesollo" xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <xacro:arg name="initial_positions_file" default="$(find fanuc_tesollo_description)/config/initial_positions.yaml"/>
+  <xacro:arg name="gripper_mount_file" default="$(find fanuc_tesollo_description)/config/gripper_mount.yaml"/>
+
+  <xacro:property name="mount" value="${xacro.load_yaml('$(find fanuc_tesollo_description)/config/gripper_mount.yaml')}"/>
+
+  <xacro:include filename="$(find fanuc_m20_description)/urdf/m20_35_18d_urdf_macro.xacro"/>
+  <xacro:include filename="$(find delto_description)/urdf/delto_gripper_3f.urdf"/>
+  <xacro:include filename="$(find fanuc_tesollo_description)/urdf/fanuc_tesollo.ros2_control.xacro"/>
+
+  <link name="world"/>
+  <link name="ee_link"/>
+  <link name="tesollo_palm"/>
+  <link name="tesollo_tool0"/>
+
+  <xacro:m20_35_18d parent="world" child="ee_link">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:m20_35_18d>
+
+  <!-- Fanuc flange/ee_link -> gripper base -->
+  <joint name="fanuc_ee_tesollo_mount" type="fixed">
+    <parent link="ee_link"/>
+    <child link="delto_base_link"/>
+    <origin xyz="${mount['gripper_mount']['xyz']}" rpy="${mount['gripper_mount']['rpy']}"/>
+  </joint>
+
+  <!-- Tool frame used by vision / MoveIt end-effector (Tesollo default TCP) -->
+  <joint name="tesollo_palm_joint" type="fixed">
+    <parent link="delto_base_link"/>
+    <child link="tesollo_palm"/>
+    <origin xyz="${mount['tesollo_palm']['xyz']}" rpy="${mount['tesollo_palm']['rpy']}"/>
+  </joint>
+
+  <joint name="tesollo_tool0_joint" type="fixed">
+    <parent link="tesollo_palm"/>
+    <child link="tesollo_tool0"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <xacro:fanuc_tesollo_ros2_control name="FanucTesolloMockSystem" initial_positions_file="$(arg initial_positions_file)"/>
+
+</robot>

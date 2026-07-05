@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+  <!-- Mock ros2_control for MoveIt demo / simulation (arm + gripper) -->
+  <xacro:macro name="fanuc_tesollo_ros2_control" params="name initial_positions_file">
+    <xacro:property name="initial_positions" value="${xacro.load_yaml(initial_positions_file)['initial_positions']}"/>
+
+    <ros2_control name="${name}" type="system">
+      <hardware>
+        <plugin>mock_components/GenericSystem</plugin>
+      </hardware>
+
+      <xacro:macro name="mock_joint" params="joint_name">
+        <joint name="${joint_name}">
+          <command_interface name="position"/>
+          <state_interface name="position">
+            <param name="initial_value">${initial_positions[joint_name]}</param>
+          </state_interface>
+          <state_interface name="velocity"/>
+        </joint>
+      </xacro:macro>
+
+      <xacro:mock_joint joint_name="J1"/>
+      <xacro:mock_joint joint_name="J2"/>
+      <xacro:mock_joint joint_name="J3"/>
+      <xacro:mock_joint joint_name="J4"/>
+      <xacro:mock_joint joint_name="J5"/>
+      <xacro:mock_joint joint_name="J6"/>
+
+      <xacro:mock_joint joint_name="F1M1"/>
+      <xacro:mock_joint joint_name="F1M2"/>
+      <xacro:mock_joint joint_name="F1M3"/>
+      <xacro:mock_joint joint_name="F1M4"/>
+      <xacro:mock_joint joint_name="F2M1"/>
+      <xacro:mock_joint joint_name="F2M2"/>
+      <xacro:mock_joint joint_name="F2M3"/>
+      <xacro:mock_joint joint_name="F2M4"/>
+      <xacro:mock_joint joint_name="F3M1"/>
+      <xacro:mock_joint joint_name="F3M2"/>
+      <xacro:mock_joint joint_name="F3M3"/>
+      <xacro:mock_joint joint_name="F3M4"/>
+    </ros2_control>
+  </xacro:macro>
+</robot>

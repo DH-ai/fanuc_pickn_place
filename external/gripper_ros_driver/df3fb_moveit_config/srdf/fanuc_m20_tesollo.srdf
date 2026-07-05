@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot name="fanuc_m20_tesollo">
+  <!-- Arm only: plan to ee_link, gripper follows via attached body -->
+  <group name="arm">
+    <chain base_link="base_link" tip_link="ee_link"/>
+  </group>
+
+  <!-- Alias expected by some MoveIt / Fanuc tooling -->
+  <group name="manipulator">
+    <chain base_link="base_link" tip_link="ee_link"/>
+  </group>
+
+  <!-- 12-DoF Tesollo gripper -->
+  <group name="gripper">
+    <joint name="F1M1"/>
+    <joint name="F1M2"/>
+    <joint name="F1M3"/>
+    <joint name="F1M4"/>
+    <joint name="F2M1"/>
+    <joint name="F2M2"/>
+    <joint name="F2M3"/>
+    <joint name="F2M4"/>
+    <joint name="F3M1"/>
+    <joint name="F3M2"/>
+    <joint name="F3M3"/>
+    <joint name="F3M4"/>
+  </group>
+
+  <!-- Plan arm + gripper together -->
+  <group name="arm_with_gripper">
+    <group name="arm"/>
+    <group name="gripper"/>
+  </group>
+
+  <group_state name="home" group="arm">
+    <joint name="J1" value="0"/>
+    <joint name="J2" value="0"/>
+    <joint name="J3" value="0"/>
+    <joint name="J4" value="0"/>
+    <joint name="J5" value="-1.5708"/>
+    <joint name="J6" value="0"/>
+  </group_state>
+
+  <group_state name="gripper_open" group="gripper">
+    <joint name="F1M1" value="0"/>
+    <joint name="F1M2" value="0"/>
+    <joint name="F1M3" value="0"/>
+    <joint name="F1M4" value="0"/>
+    <joint name="F2M1" value="0"/>
+    <joint name="F2M2" value="0"/>
+    <joint name="F2M3" value="0"/>
+    <joint name="F2M4" value="0"/>
+    <joint name="F3M1" value="0"/>
+    <joint name="F3M2" value="0"/>
+    <joint name="F3M3" value="0"/>
+    <joint name="F3M4" value="0"/>
+  </group_state>
+
+  <!-- Preset from gripper_code.py BALL pose (degrees -> radians) -->
+  <group_state name="gripper_ball" group="gripper">
+    <joint name="F1M1" value="-0.0873"/>
+    <joint name="F1M2" value="-0.0401"/>
+    <joint name="F1M3" value="1.0821"/>
+    <joint name="F1M4" value="1.2043"/>
+    <joint name="F2M1" value="-1.0472"/>
+    <joint name="F2M2" value="-0.0279"/>
+    <joint name="F2M3" value="1.0036"/>
+    <joint name="F2M4" value="1.2077"/>
+    <joint name="F3M1" value="1.0472"/>
+    <joint name="F3M2" value="-0.0401"/>
+    <joint name="F3M3" value="0.9563"/>
+    <joint name="F3M4" value="1.1938"/>
+  </group_state>
+
+  <end_effector name="tesollo_tool0" parent_link="tesollo_tool0" group="gripper"/>
+
+  <virtual_joint name="virtual_joint" type="fixed" parent_frame="world" child_link="base_link"/>
+
+  <!-- Arm self-collision disables (subset) -->
+  <disable_collisions link1="J1_link" link2="J2_link" reason="Adjacent"/>
+  <disable_collisions link1="J2_link" link2="J3_link" reason="Adjacent"/>
+  <disable_collisions link1="J3_link" link2="J4_link" reason="Adjacent"/>
+  <disable_collisions link1="J4_link" link2="J5_link" reason="Adjacent"/>
+  <disable_collisions link1="J5_link" link2="J6_link" reason="Adjacent"/>
+  <disable_collisions link1="J6_link" link2="ee_link" reason="Adjacent"/>
+  <disable_collisions link1="ee_link" link2="delto_base_link" reason="Adjacent"/>
+  <disable_collisions link1="delto_base_link" link2="F1_01" reason="Adjacent"/>
+  <disable_collisions link1="delto_base_link" link2="F2_01" reason="Adjacent"/>
+  <disable_collisions link1="delto_base_link" link2="F3_01" reason="Adjacent"/>
+</robot>

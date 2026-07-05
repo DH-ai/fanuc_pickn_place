@@ -1,0 +1,11 @@
+# Mount transform: Fanuc ee_link -> Tesollo delto_base_link
+# Tune on hardware using teach pendant / hand-eye calibration.
+# Tesollo manual default TCP offset from palm: Z = 230 mm.
+gripper_mount:
+  xyz: "0 0 0"
+  rpy: "0 0 0"
+
+# Optional tool frame on gripper palm (matches vision pipeline tesollo_palm)
+tesollo_palm:
+  xyz: "0 0 0.23"
+  rpy: "0 0 0"
