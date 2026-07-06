@@ -15,7 +15,7 @@ from pymodbus.client import ModbusTcpClient
 import time
 
 # ─── CONNECTION CONFIG ───────────────────────────────────────────────
-GRIPPER_IP   = "169.254.186.72"
+GRIPPER_IP   = "192.168.0.30"
 GRIPPER_PORT = 502
 SLAVE_ID     = 12     # check manual — may be 9 for some firmware versions
 
@@ -258,7 +258,7 @@ if __name__ == "__main__":
 
     
     gripper.activate()  # initial status check
-    exit(1)
+    
     try:
         # 1. Activate
         gripper.activate()

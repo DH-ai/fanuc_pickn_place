@@ -4,7 +4,7 @@ import time
 import threading
 
 class DeltoGripper:
-    def __init__(self, ip_address="169.254.186.72", port=502):
+    def __init__(self, ip_address="192.168.0.30", port=502):
         self.ip_address = ip_address
         self.port = port
         self.socket = None
