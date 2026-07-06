@@ -5,10 +5,6 @@ Operator Control Mode (gripper acts as Modbus Slave/Server)
 
 Default IP  : 169.254.186.72
 Default Port: 502
-
-IMPORTANT: Register addresses marked with [REG: ???] must be verified
-against the manual that came on the USB stick with your gripper.
-The manual has the full register map in the Modbus section.
 """
 
 from pymodbus.client import ModbusTcpClient
@@ -17,7 +13,7 @@ import time
 # ─── CONNECTION CONFIG ───────────────────────────────────────────────
 GRIPPER_IP   = "192.168.0.30"
 GRIPPER_PORT = 502
-SLAVE_ID     = 12     # check manual — may be 9 for some firmware versions
+SLAVE_ID     = 1     # check manual — may be 9 for some firmware versions
 
 # ─── REGISTER MAP (verify all addresses from your manual) ───────────
 # Output registers (you WRITE to these to command the gripper)
@@ -69,7 +65,7 @@ class TesolloGripper:
             return False
         return True
 
-    def write_registers(self, address, values):
+    def write_registers(self, address, values,id=SLAVE_ID):
         """Write multiple holding registers (FC16)."""
         result = self.client.write_registers(
             address=address,
@@ -117,9 +113,11 @@ class TesolloGripper:
         """
         print("[→] Activating gripper...")
         # rACT = 0x01 to activate
-        self.write_register(REG_CONTROL, 0x00)  # reset first
+        print(f"Writing to register {REG_CONTROL}: 0x00")
+        print(f"Success: {self.write_register(REG_CONTROL, 0x00)}")  # reset first
         time.sleep(0.5)
-        self.write_register(REG_CONTROL, 0x01)  # set rACT
+        print(f"Writing to register {REG_CONTROL}: 0x01")
+        print(f"Success: {self.write_register(REG_CONTROL, 0x01)}")  # set rACT
         time.sleep(2.0)  # wait for activation to complete
         print("[OK] Activation command sent")
 
@@ -132,8 +130,9 @@ class TesolloGripper:
         if mode not in modes:
             print(f"[ERROR] Unknown mode '{mode}'. Use: {list(modes.keys())}")
             return
-        self.write_register(REG_GRIP_MODE, modes[mode])
+        suc = self.write_register(REG_GRIP_MODE, modes[mode],2)
         print(f"[→] Grip mode set to: {mode}")
+        return suc
 
     def move(self, position: int, speed: int = 128, force: int = 100):
         """
@@ -147,16 +146,19 @@ class TesolloGripper:
         force    = max(0, min(255, force))
 
         # Write position, speed, force in one multi-register write
-        self.write_registers(
+        success =self.write_registers(
             address=REG_TARGET_POS,
             values=[position, speed, force]
         )
         print(f"[→] Move: pos={position}, speed={speed}, force={force}")
+        return success
 
     def open(self, speed=150):
         """Fully open the gripper."""
         print("[→] Opening gripper...")
-        self.move(position=0, speed=speed, force=50)
+        success = self.move(position=0, speed=speed, force=50)
+        
+        return success
 
     def close(self, speed=150, force=150):
         """Fully close the gripper."""
@@ -258,36 +260,39 @@ if __name__ == "__main__":
 
     
     gripper.activate()  # initial status check
-    
-    try:
-        # 1. Activate
-        gripper.activate()
-        gripper.get_status()
+    # gripper.disconnect()
+    print("Initial Positions:", gripper.read_input_registers(REG_CURRENT_A, count=3))
+    # try:
+    print(gripper.set_mode('wide'))
 
-        # 2. Open fully
-        gripper.open()
-        gripper.wait_for_stop()
-        gripper.get_status()
+    #     # 1. Activate
+    #     gripper.activate()
+    #     gripper.get_status()
 
-        # 3. Test circle grasp
-        print("\n[TEST] Circle grasp")
-        grasp_circle(gripper)
-        gripper.get_status()
-        time.sleep(1)
+    #     # 2. Open fully
+    #     gripper.open()
+    #     gripper.wait_for_stop()
+    #     gripper.get_status()
 
-        # 4. Open again
-        gripper.open()
-        gripper.wait_for_stop()
+    #     # 3. Test circle grasp
+    #     print("\n[TEST] Circle grasp")
+    #     grasp_circle(gripper)
+    #     gripper.get_status()
+    #     time.sleep(1)
 
-        # 5. Test heart grasp
-        print("\n[TEST] Heart grasp")
-        grasp_heart(gripper)
-        gripper.get_status()
-        time.sleep(1)
+    #     # 4. Open again
+    #     gripper.open()
+    #     gripper.wait_for_stop()
 
-        # 6. Return to open
-        gripper.open()
-        gripper.wait_for_stop()
+    #     # 5. Test heart grasp
+    #     print("\n[TEST] Heart grasp")
+    #     grasp_heart(gripper)
+    #     gripper.get_status()
+    #     time.sleep(1)
 
-    finally:
-        gripper.disconnect()
+    #     # 6. Return to open
+    #     gripper.open()
+    #     gripper.wait_for_stop()
+
+    # finally:
+    #     gripper.disconnect()
