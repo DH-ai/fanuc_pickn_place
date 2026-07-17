@@ -8,6 +8,8 @@ DG-3FB gripper, Mech-Eye 3D camera, force sensing, and MoveIt 2.
 > and cell clearance before physical motion. Start in mock mode, then test at
 > low speed under qualified supervision with an emergency stop available.
 
+## [Documentaion](https://github.com/DH-ai/fanuc_pickn_place/tree/main/docs#readme)
+
 
 
 Next Follow for ML pipiline - [Synthetic-Data-Yolo_training-and-pose-estimation](https://github.com/DH-ai/synthetic-data-yolo-training_and_pose_estimation/blob/main/README.md)
